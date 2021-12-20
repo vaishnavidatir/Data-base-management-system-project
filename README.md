@@ -1,2 +1,2 @@
-# Data-base-management-system-project
+# Database Management System
 College project
