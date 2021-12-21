@@ -1,7 +1,19 @@
+<?php
+
+session_start();
+if (!isset($_SESSION['username'])) {
+  header("location: /");
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -129,18 +141,7 @@
             <a class="nav-link" href="pages/Facility.html">Facilities</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="pages/pricing.html">Pricing</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
-              Login
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <li><a class="dropdown-item" href="pages/login.php">Guest Login</a></li>
-              <li><a class="dropdown-item" onclick="commingSoon();" href="#">Empolyee Login</a></li>
-              <li><a class="dropdown-item" onclick="commingSoon();" href="#">Manager Login</a></li>
-            </ul>
+            <a class="nav-link" href="logout.php">Logout</a>
           </li>
         </ul>
       </div>
@@ -148,54 +149,70 @@
   </nav>
 
 
+  <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Room Number</th>
+          <th scope="col">Room Type</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+               require_once "../backend/connection.php";
+               //show popup when guest select the room
+               if (isset($_POST['selectRoom'])) {
 
+                session_start();
+                echo $_SESSION;
+                  
+               }
+               
+                $fetchRoom = "SELECT * FROM rooms";
+                $getRooms = mysqli_query($conn,$fetchRoom);
+                if(mysqli_num_rows($getRooms) > 0){
+                while($row = mysqli_fetch_assoc($getRooms)){
+                  ?>
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+          <tr>
+            <th scope="row">
+              <?php echo $row['id']; ?>
+            </th>
+            <td>
+              <?php echo $row['room_number']; ?>
+            </td>
+            <td>
+              <?php echo $row['room_type']; ?>
+            </td>
+            <td>
+              <input type="submit" name="selectRoom" class="btn btn-primary" value="Select room">
+            </td>
+          </tr>
+        </form>
 
-  <div class="slider">
-    <div class="slide">
-      <img src="images/hotelimg.jpeg" alt="Photo1" />
-    </div>
-    <div class="slide">
-      <img src="images/re.jpg" alt="Photo1" />
-    </div>
-    <div class="slide">
-      <img align="center" src="images/room1.jpg" alt="Photo3" />
-    </div>
-    <div class="slide">
-      <img src="images/room2.jpg" alt="Photo2" />
-    </div>
-    <div class="slide">
-      <img src="images/room3.jpg" alt="Photo3" />
-    </div>
-
-    <button class="btn-slide prev"><i class="fas fa-3x fa-chevron-circle-left"></i></button>
-    <button class="btn-slide next"><i class="fas fa-3x fa-chevron-circle-right"></i></button>
-
+        <?php
+                }
+              }
+              ?>
+      </tbody>
+    </table>
   </div>
-  <div class="dots-container">
-    <span class="dot active" data-slide="0"></span>
-    <span class="dot" data-slide="1"></span>
-    <span class="dot" data-slide="2"></span>
-    <span class="dot" data-slide="3"></span>
-  </div>
-    <footer class="py-3 my-4 bg-dark">
-      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-        <li class="nav-item"><a
-            href="/"
-            class="nav-link px-2 text-muted">Home</a></li>
-        <li class="nav-item"><a href="pages/Facility.html "
-            class="nav-link px-2 text-muted">Facilities</a></li>
+  <footer class="py-3 my-4 bg-dark">
+    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+      <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">Home</a></li>
+      <li class="nav-item"><a href="pages/Facility.html " class="nav-link px-2 text-muted">Facilities</a></li>
 
-        <li class="nav-item"><a href="pages/Faq.html"
-            class="nav-link px-2 text-muted">FAQs</a></li>
-        <li class="nav-item"><a href="pages/About_us.html"
-            class="nav-link px-2 text-muted">About us</a></li>
-      </ul>
-      <p class="text-center text-muted">&copy; 2021 Company, Inc</p>
-    </footer>
+      <li class="nav-item"><a href="pages/Faq.html" class="nav-link px-2 text-muted">FAQs</a></li>
+      <li class="nav-item"><a href="pages/About_us.html" class="nav-link px-2 text-muted">About us</a></li>
+    </ul>
+    <p class="text-center text-muted">&copy; 2021 Company, Inc</p>
+  </footer>
 
   <script type="text/javascript">
 
-    function commingSoon(){
+    function commingSoon() {
       alert("This feature is comming soon.")
     }
     function Slider() {
@@ -245,7 +262,10 @@
 
 
   </script>
-
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
   <!-- JavaScript Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
